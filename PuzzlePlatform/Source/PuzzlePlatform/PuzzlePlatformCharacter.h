@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "PuzzlePlatformCharacter.generated.h"
 
+#define DEFAULT_RUN_SPEED 600
+#define QUICK_RUN_SPEED 1000
+
 UCLASS(config=Game)
 class APuzzlePlatformCharacter : public ACharacter
 {
@@ -29,6 +32,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		float StageScore;
+
+	UFUNCTION()
+		void AddStageScore(float score);
 protected:
 
 	/** Resets HMD orientation in VR. */
@@ -57,6 +65,9 @@ protected:
 
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
+
+	void DefaultRun();
+	void QuickRun();
 
 protected:
 	// APawn interface

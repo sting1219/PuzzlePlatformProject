@@ -74,6 +74,10 @@ void APuzzlePlatformCharacter::SetupPlayerInputComponent(class UInputComponent* 
 
 	// VR headset functionality
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &APuzzlePlatformCharacter::OnResetVR);
+
+	PlayerInputComponent->BindAction("QuickRun", IE_Pressed, this, &APuzzlePlatformCharacter::QuickRun);
+	PlayerInputComponent->BindAction("QuickRun", IE_Released, this, &APuzzlePlatformCharacter::DefaultRun);
+	//
 }
 
 
@@ -131,4 +135,25 @@ void APuzzlePlatformCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void APuzzlePlatformCharacter::DefaultRun()
+{
+	UCharacterMovementComponent *MovementPtr = Cast<UCharacterMovementComponent>(GetCharacterMovement());
+
+	if(MovementPtr)
+		MovementPtr->MaxWalkSpeed = DEFAULT_RUN_SPEED;
+}
+
+void APuzzlePlatformCharacter::QuickRun()
+{
+	UCharacterMovementComponent *MovementPtr = Cast<UCharacterMovementComponent>(GetCharacterMovement());
+
+	if (MovementPtr)
+		MovementPtr->MaxWalkSpeed = QUICK_RUN_SPEED;
+}
+
+void APuzzlePlatformCharacter::AddStageScore(float score)
+{
+	StageScore += score;
 }

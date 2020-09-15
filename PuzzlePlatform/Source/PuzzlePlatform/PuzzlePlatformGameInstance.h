@@ -7,6 +7,9 @@
 #include "MenuSystem/MenuInterface.h"
 #include "PuzzlePlatformGameInstance.generated.h"
 
+
+#define STAGE_NAME TEXT("Stage_")
+#define STAGE_PATH TEXT("/Game/ThirdPersonCPP/Maps/")
 /**
  * 
  */
@@ -33,10 +36,28 @@ class PUZZLEPLATFORM_API UPuzzlePlatformGameInstance : public UGameInstance, pub
 
 	virtual void LoadMainMenu() override;
 
+public:
+	UFUNCTION(Exec)
+		void GoStage(int stagenum);
+
+	UFUNCTION(Exec)
+		void NextLevel();
+
+	UFUNCTION(BlueprintCallable)
+	bool GetIsFinish() { return IsFinish; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetIsFInish(bool value) { IsFinish = value; }
 private:
 	TSubclassOf<class UUserWidget> MenuClass;
 	TSubclassOf<class UUserWidget> InGameMenuClass;
 
 	class UMainMenu* Menu;
 	class UInGameMenu* InGameMenu;
+
+	bool IsFinish;
+
+	int CurrentStage_Number;
+
+	float RemainTime;
 };

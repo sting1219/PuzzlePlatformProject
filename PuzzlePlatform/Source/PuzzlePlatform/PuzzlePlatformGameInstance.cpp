@@ -22,9 +22,7 @@ UPuzzlePlatformGameInstance::UPuzzlePlatformGameInstance(const FObjectInitialize
 	if (!ensure(InGameMenuBPClass.Class != nullptr)) return;
 
 	InGameMenuClass = InGameMenuBPClass.Class;
-
-
-	UE_LOG(LogTemp, Warning, TEXT("GameInstance Constructor - Found class %s"), *MenuBPClass.Class->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("GameInstance Constructor - Found class %s"), *MenuBPClass.Class->GetName());
 }
 
 void UPuzzlePlatformGameInstance::Init()
@@ -34,6 +32,11 @@ void UPuzzlePlatformGameInstance::Init()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Found subsystem %s"), *Subsystem->GetSubsystemName().ToString());
 	}
+
+	CurrentStage_Number = 0;
+	IsFinish = false;
+	RemainTime = 0;
+
 	UE_LOG(LogTemp, Warning, TEXT("GameInstance Init!!"));
 }
 
@@ -96,4 +99,56 @@ void UPuzzlePlatformGameInstance::LoadMainMenu()
 	if (!ensure(PlayerController != nullptr)) return;
 
 	PlayerController->ClientTravel("/Game/MenuSystem/MainMenu", ETravelType::TRAVEL_Absolute);
+}
+
+void UPuzzlePlatformGameInstance::GoStage(int stagenum)
+{
+	UE_LOG(LogTemp, Warning, TEXT("NextLevel"));
+	if (Menu != nullptr)
+	{
+		Menu->Teardown();
+		UE_LOG(LogTemp, Warning, TEXT("menu tear down"));
+	}
+
+	UEngine* Engine = GetEngine();
+	if (!ensure(Engine != nullptr)) return;
+
+	UWorld* World = GetWorld();
+	if (!ensure(World != nullptr)) return;
+	FString str_num = FString::FromInt(stagenum);
+
+	if (stagenum < 10)
+		str_num = FString::Printf(TEXT("0%d"),stagenum);
+
+	const FString map_name = FString::Printf(TEXT("%s%s%s%s"), STAGE_PATH, STAGE_NAME, *str_num, TEXT("?listen"));
+	World->ServerTravel(map_name);
+}
+
+void UPuzzlePlatformGameInstance::NextLevel()
+{
+	UE_LOG(LogTemp, Warning, TEXT("NextLevel"));
+	if (Menu != nullptr)
+	{
+		Menu->Teardown();
+		UE_LOG(LogTemp, Warning, TEXT("menu tear down"));
+	}
+
+	UEngine* Engine = GetEngine();
+	if (!ensure(Engine != nullptr)) return;
+
+	UWorld* World = GetWorld();
+	if (!ensure(World != nullptr)) return;
+
+	if (IsFinish) return;
+
+	++CurrentStage_Number;
+	IsFinish = true;
+
+	FString str_num = FString::FromInt(CurrentStage_Number);
+
+	if (CurrentStage_Number < 10)
+		str_num = FString::Printf(TEXT("0%d"), CurrentStage_Number);
+
+	const FString map_name = FString::Printf(TEXT("%s%s%s%s"), STAGE_PATH, STAGE_NAME, *str_num, TEXT("?listen"));
+	World->ServerTravel(map_name);
 }
