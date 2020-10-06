@@ -20,6 +20,7 @@ APlatformTrigger::APlatformTrigger()
 
 	RootComponent = TriggerVolume;
 
+
 	TriggerVolume->OnComponentBeginOverlap.AddDynamic(this, &APlatformTrigger::OnOverlapBegin);
 	TriggerVolume->OnComponentEndOverlap.AddDynamic(this, &APlatformTrigger::OnOverlapEnd);
 }
