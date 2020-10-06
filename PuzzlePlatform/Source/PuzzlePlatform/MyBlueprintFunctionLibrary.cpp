@@ -5,22 +5,27 @@
 
 #define GET_NAME(n) #n
 
-FString UMyBlueprintFunctionLibrary::ReceiveSomeStruct(UProperty* AnyStruct)
+FString UMyBlueprintFunctionLibrary::GetVariableName(float A, float B)
 {
-
-	FString a = FString::Printf(TEXT("None Struct"));
-	if (AnyStruct)
-	{
-		a = FString::Printf(TEXT("in Struct"));
-		return a;
-		//return GET_NAME(AnyStruct);
-	}
-
-	return a;
+	check(0);
+	return FString::Printf(TEXT("GetVariableName"));
 }
 
-//FString UMyBlueprintFunctionLibrary::GetVariableName(TWeakObjectPtr<UObject> Node)
+FString UMyBlueprintFunctionLibrary::Generic_GetVariableName(float A, float B)
+{
+
+	return FString::Printf(TEXT("Generic_GetVariableName : %f"), A + B);
+}
+
+//FString UMyBlueprintFunctionLibrary::GetVariableName1(UProperty* A, float B)
 //{
-//	
-//	return "";
+//	check(0);
+//	return FString::Printf(TEXT("GetVariableName1"));
 //}
+//
+//FString UMyBlueprintFunctionLibrary::Generic_GetVariableName1(UProperty* A, float B)
+//{
+//
+//	return FString::Printf(TEXT("Generic_GetVariableName1 : %f"), B);
+//}
+
