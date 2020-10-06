@@ -17,154 +17,57 @@ class PUZZLEPLATFORM_API UMyBlueprintFunctionLibrary : public UBlueprintFunction
 
 public:
 
-	/*UFUNCTION(BlueprintCallable, BlueprintPure)
-		static FString GetVariableName(TWeakObjectPtr<UObject> Node);*/
+	UFUNCTION(BlueprintPure, CustomThunk, meta = (DisplayName = "GetVariableName", CompactNodeTitle = "Getname"), Category = "MyETC")
+		static FString GetVariableName(float A, float B = 1.f);
 
-	//UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Statics")
-	//	static bool TestClassType(UObject* object, TSubclassOf<UObject> clazz);
+	static FString Generic_GetVariableName(float A, float B);
 
-	//UFUNCTION(BlueprintCallable, Category = "Statics", Meta = (ExpandEnumAsExecs = "Branches"))
-	//	static void BranchClassType(UObject* object, TSubclassOf<UObject> clazz, TrueFalseEnum& branches);
-
-
-
-	//UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Statics")
-	//	static bool ArrayHasMembers(const TArray<UObject*>& object);
-
-	//UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Statics")
-	//	static bool ArrayHasMembers_FTransform(const TArray<FTransform>& object);
-
-	//UFUNCTION(BlueprintCallable, Category = "Statics", Meta = (ExpandEnumAsExecs = "Branches"))
-	//	static void BranchArrayHasMembers(const TArray<UObject*>& object, TrueFalseEnum& branches);
-
-	//UFUNCTION(BlueprintCallable, Category = "Statics", Meta = (ExpandEnumAsExecs = "Branches"))
-	//	static void BranchArrayHasMembers_FTransform(const TArray<FTransform>& object, TrueFalseEnum& branches);
-
-	//UFUNCTION(BlueprintCallable, Category = "Statics", Meta = (CustomStructureParam = "anyStruct", ExpandEnumAsExecs = "Branches"))
-	//	static void BranchArrayHasMembers_Struct(UArrayProperty* anyStruct, TrueFalseEnum& branches);
-
-		// Example Blueprint function that receives any struct as input
-		UFUNCTION(BlueprintCallable, Category = "Example", CustomThunk, meta = (CustomStructureParam = "AnyStruct"))
-		static FString ReceiveSomeStruct(UProperty* AnyStruct);
-
-	DECLARE_FUNCTION(execReceiveSomeStruct)
+	DECLARE_FUNCTION(execGetVariableName)
 	{
-		// Steps into the stack, walking to the next property in it
-		Stack.Step(Stack.Object, NULL);
+		P_GET_PROPERTY(UFloatProperty, A);
+		P_GET_PROPERTY(UFloatProperty, B);
 
-		// Grab the last property found when we walked the stack
-		// This does not contains the property value, only its type information
-		UStructProperty* StructProperty = ExactCast<UStructProperty>(Stack.MostRecentProperty);
-
-		// Grab the base address where the struct actually stores its data
-		// This is where the property value is truly stored
-		void* StructPtr = Stack.MostRecentPropertyAddress;
-
-		// We need this to wrap up the stack
 		P_FINISH;
 
-		// Iterate through the struct
-		IterateThroughStructProperty(StructProperty, StructPtr);
+		if (B == 0.f)
+		{
+			FFrame::KismetExecutionMessage(*FString::Printf(TEXT("Divide by zero detected: %f / 0\n%s"), A, *Stack.GetStackTrace()), ELogVerbosity::Warning);
+			*(float*)RESULT_PARAM = 0;
+			return;
+		}
+
+		*(FString*)RESULT_PARAM = Generic_GetVariableName(A, B);
 	}
 
-	/* Example function for parsing a single property
-	* @param Property    the property reflection data
-	* @param ValuePtr    the pointer to the property value
-	*/
-	static void ParseProperty(UProperty* Property, void* ValuePtr)
-	{
 
-		float FloatValue;
-		int32 IntValue;
-		bool BoolValue;
-		FString StringValue;
-		FName NameValue;
-		FText TextValue;
+	//UFUNCTION(BlueprintPure, CustomThunk, meta = (DisplayName = "GetVariableName1", CompactNodeTitle = "Getname"), Category = "MyETC")
+	//	static FString GetVariableName1(UProperty* A, float B = 1.f);
 
+	//static FString Generic_GetVariableName1(UProperty* A, float B);
 
-		// Here's how to read integer and float properties
-		if (UNumericProperty *NumericProperty = Cast<UNumericProperty>(Property))
-		{
-			if (NumericProperty->IsFloatingPoint())
-			{
-				FloatValue = NumericProperty->GetFloatingPointPropertyValue(ValuePtr);
-			}
-			else if (NumericProperty->IsInteger())
-			{
-				IntValue = NumericProperty->GetSignedIntPropertyValue(ValuePtr);
-			}
-		}
+	//DECLARE_FUNCTION(execGetVariableName1)
+	//{
 
-		// How to read booleans
-		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(Property))
-		{
-			BoolValue = BoolProperty->GetPropertyValue(ValuePtr);
-		}
+	//	// Steps into the stack, walking to the next property in it
+	//	/*Stack.Step(Stack.Object, NULL);
 
-		// Reading names
-		if (UNameProperty* NameProperty = Cast<UNameProperty>(Property))
-		{
-			NameValue = NameProperty->GetPropertyValue(ValuePtr);
-		}
+	//	UProperty* StructProperty = Cast<UProperty>(Stack.MostRecentProperty);
 
-		// Reading strings
-		if (UStrProperty* StringProperty = Cast<UStrProperty>(Property))
-		{
-			StringValue = StringProperty->GetPropertyValue(ValuePtr);
-		}
+	//	void* StructPtr = Stack.MostRecentPropertyAddress;*/
 
-		// Reading texts
-		if (UTextProperty* TextProperty = Cast<UTextProperty>(Property))
-		{
-			//TextValue = TextProperty->GetPropertyValue(ValuePtr);
-		}
+	//	//P_GET_PROPERTY(UFloatProperty, A);
+	//	P_GET_PROPERTY(UFloatProperty, B);
 
-		// Reading an array
-		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(Property))
-		{
-			// We need the helper to get to the items of the array            
-			FScriptArrayHelper Helper(ArrayProperty, ValuePtr);
-			for (int32 i = 0, n = Helper.Num(); i < n; ++i)
-			{
-				ParseProperty(ArrayProperty->Inner, Helper.GetRawPtr(i));
-			}
-		}
+	//	P_FINISH;
 
-		// Reading a nested struct
-		if (UStructProperty* StructProperty = Cast<UStructProperty>(Property))
-		{
-			IterateThroughStructProperty(StructProperty, ValuePtr);
-		}
-	}
+	//	if (B == 0.f)
+	//	{
+	//		//FFrame::KismetExecutionMessage(*FString::Printf(TEXT("Divide by zero detected: %f / 0\n%s"), A, *Stack.GetStackTrace()), ELogVerbosity::Warning);
+	//		*(float*)RESULT_PARAM = 0;
+	//		return;
+	//	}
 
-	/*
-	* Example function for iterating through all properties of a struct
-	* @param StructProperty    The struct property reflection data
-	* @param StructPtr        The pointer to the struct value
-	*/
-	static void IterateThroughStructProperty(UStructProperty* StructProperty, void* StructPtr)
-	{
-		if (StructProperty == nullptr) return;
+	//	//*(FString*)RESULT_PARAM = Generic_GetVariableName1(StructProperty, B);
+	//}
 
-		// Walk the structs' properties
-		UScriptStruct* Struct = StructProperty->Struct;
-		for (TFieldIterator<UProperty> It(Struct); It; ++It)
-		{
-			UProperty* Property = *It;
-
-			// This is the variable name if you need it
-			FString VariableName = Property->GetName();
-
-			// Never assume ArrayDim is always 1
-			for (int32 ArrayIndex = 0; ArrayIndex < Property->ArrayDim; ArrayIndex++)
-			{
-				// This grabs the pointer to where the property value is stored
-				void* ValuePtr = Property->ContainerPtrToValuePtr<void>(StructPtr, ArrayIndex);
-
-				// Parse this property
-				ParseProperty(Property, ValuePtr);
-			}
-		}
-	}
-	
 };

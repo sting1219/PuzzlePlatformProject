@@ -13,4 +13,12 @@ APuzzlePlatformGameMode::APuzzlePlatformGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerBPClass(TEXT("/Game/PuzzlePlatform/BP_PuzzlePlayerController"));
+	//static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ParagonKwang/Characters/Heroes/Kwang/KwangPlayerCharacter"));
+	if (PlayerControllerBPClass.Class != NULL)
+	{
+		PlayerControllerClass = PlayerControllerBPClass.Class;
+		
+	}
 }

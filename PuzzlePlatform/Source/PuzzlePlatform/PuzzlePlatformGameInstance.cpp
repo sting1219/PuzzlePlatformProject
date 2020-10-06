@@ -11,6 +11,8 @@
 #include "MenuSystem/MainMenu.h"
 #include "MenuSystem/MenuWidget.h"
 
+#include "PuzzlePlatformPlayerController.h"
+
 UPuzzlePlatformGameInstance::UPuzzlePlatformGameInstance(const FObjectInitializer & ObjectInitializer)
 {
 	static ConstructorHelpers::FClassFinder<UUserWidget> MenuBPClass(TEXT("/Game/MenuSystem/WBP_MainMenu"));
@@ -23,6 +25,12 @@ UPuzzlePlatformGameInstance::UPuzzlePlatformGameInstance(const FObjectInitialize
 
 	InGameMenuClass = InGameMenuBPClass.Class;
 	//UE_LOG(LogTemp, Warning, TEXT("GameInstance Constructor - Found class %s"), *MenuBPClass.Class->GetName());
+
+
+	//////////////////// Replay //////////////////////////
+	RecordingName = "MyReplay";
+	FriendlyRecordingName = "My Replay";
+	//////////////////// Replay //////////////////////////
 }
 
 void UPuzzlePlatformGameInstance::Init()
@@ -151,4 +159,35 @@ void UPuzzlePlatformGameInstance::NextLevel()
 
 	const FString map_name = FString::Printf(TEXT("%s%s%s%s"), STAGE_PATH, STAGE_NAME, *str_num, TEXT("?listen"));
 	World->ServerTravel(map_name);
+}
+
+
+void UPuzzlePlatformGameInstance::StartRecording()
+{
+
+	/*TArray<FString> URLOption;
+	URLOption.Add("ReplayStreamerOverride=InMemotyNetworkReplayStreaming");*/
+	StartRecordingReplay(RecordingName, FriendlyRecordingName);
+}
+
+void UPuzzlePlatformGameInstance::StopRecording()
+{
+	StopRecordingReplay();
+}
+
+void UPuzzlePlatformGameInstance::StartReplay()
+{
+	PlayReplay(RecordingName, nullptr);
+}
+
+void UPuzzlePlatformGameInstance::TestReplayRecording()
+{
+	APlayerController* PlayerController = GetFirstLocalPlayerController();
+	if (!ensure(PlayerController != nullptr)) return;
+
+	APuzzlePlatformPlayerController* pc = Cast< APuzzlePlatformPlayerController>(PlayerController);
+	if (pc)
+	{
+		pc->RestartRecording();
+	}
 }

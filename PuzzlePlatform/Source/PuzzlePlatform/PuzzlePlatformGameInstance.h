@@ -36,6 +36,27 @@ class PUZZLEPLATFORM_API UPuzzlePlatformGameInstance : public UGameInstance, pub
 
 	virtual void LoadMainMenu() override;
 
+
+
+	//////////////////////////// Replay ////////////////////////////////
+
+	UPROPERTY(EditDefaultsOnly, Category = "Replays")
+		FString RecordingName;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Replays")
+		FString FriendlyRecordingName;
+
+	UFUNCTION(BlueprintCallable, Category = "Replays")
+		void StartRecording();
+
+	UFUNCTION(BlueprintCallable, Category = "Replays")
+		void StopRecording();
+
+	UFUNCTION(BlueprintCallable, Category = "Replays")
+		void StartReplay();
+
+	//////////////////////////// Replay ////////////////////////////////
+
 public:
 	UFUNCTION(Exec)
 		void GoStage(int stagenum);
@@ -48,6 +69,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetIsFInish(bool value) { IsFinish = value; }
+
+	UFUNCTION(BlueprintCallable)
+		void TestReplayRecording();
 private:
 	TSubclassOf<class UUserWidget> MenuClass;
 	TSubclassOf<class UUserWidget> InGameMenuClass;
