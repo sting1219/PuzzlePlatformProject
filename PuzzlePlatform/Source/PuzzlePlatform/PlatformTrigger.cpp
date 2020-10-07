@@ -57,7 +57,6 @@ void APlatformTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 	}
 
 
-
 	if (GetGameInstance())
 	{
 		UPuzzlePlatformGameInstance* instance = Cast< UPuzzlePlatformGameInstance>(GetGameInstance());
